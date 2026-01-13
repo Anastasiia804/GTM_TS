@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tag Manager Test Page</title>
+  
+  <!-- Your Custom Tag Manager Container -->
+  <script src="http://localhost:3000/container.js?id=CTM-1234567890&debug=true"></script>
+  
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .buy-button {
+      background: #28a745;
+    }
+    .buy-button:hover {
+      background: #218838;
+    }
+    #log {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    .log-entry {
+      margin: 5px 0;
+      padding: 5px;
+    }
+    .log-event {
+      color: #4ec9b0;
+    }
+    .log-tag {
+      color: #ce9178;
+    }
+    .info-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 15px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🏷️ Tag Manager Test Page</h1>
+    <p>Эта страница предназначена для тестирования вашей системы управления тегами.</p>
+    
+    <div class="info-box">
+      <strong>Container ID:</strong> CTM-1234567890<br>
+      <strong>Debug Mode:</strong> Enabled (откройте консоль браузера для деталей)
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Тестирование событий</h2>
+    <p>Нажимайте на кнопки ниже для отправки событий через dataLayer:</p>
+    
+    <button onclick="testPageView()">📄 Page View</button>
+    <button onclick="testCustomEvent()">🎯 Custom Event</button>
+    <button class="buy-button" onclick="testPurchase()">🛒 Purchase Event</button>
+    <button onclick="testAddToCart()">➕ Add to Cart</button>
+    <button onclick="testUserLogin()">👤 User Login</button>
+  </div>
+
+  <div class="card">
+    <h2>DataLayer Inspector</h2>
+    <p>Текущее состояние dataLayer и события:</p>
+    <div id="log"></div>
+    <button onclick="clearLog()">Очистить лог</button>
+    <button onclick="showDataLayer()">Показать весь dataLayer</button>
+  </div>
+
+  <div class="card">
+    <h2>Элементы для тестирования триггеров</h2>
+    <p>Используйте эти элементы для тестирования click и visibility триггеров:</p>
+    
+    <button id="test-click-trigger" class="buy-button">
+      Кнопка покупки (с триггером)
+    </button>
+    
+    <div style="margin-top: 20px;">
+      <a href="#checkout" id="checkout-link">Перейти к оформлению заказа</a>
+    </div>
+    
+    <div style="margin-top: 50px; height: 400px; overflow-y: scroll; border: 1px solid #ddd; padding: 20px;">
+      <p>Прокрутите вниз, чтобы протестировать visibility триггер:</p>
+      <div style="height: 800px;"></div>
+      <div id="lazy-load-trigger" style="background: #28a745; color: white; padding: 20px; text-align: center;">
+        <strong>🎯 Элемент для visibility триггера</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>URL Pattern Triggers</h2>
+    <p>Текущий URL: <code id="current-url"></code></p>
+    <button onclick="changeUrl('/checkout')">Симулировать /checkout</button>
+    <button onclick="changeUrl('/thank-you')">Симулировать /thank-you</button>
+    <button onclick="changeUrl('/products/item-123')">Симулировать /products/item-123</button>
+  </div>
+
+  <script>
+    // Logger
+    const logElement = document.getElementById('log');
+    const originalPush = window.dataLayer.push;
+    
+    function addLog(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      const entry = document.createElement('div');
+      entry.className = 'log-entry log-' + type;
+      entry.textContent = `[${timestamp}] ${message}`;
+      logElement.appendChild(entry);
+      logElement.scrollTop = logElement.scrollHeight;
+    }
+
+    // Monitor dataLayer
+    window.dataLayer.push = function() {
+      const result = originalPush.apply(window.dataLayer, arguments);
+      for (let i = 0; i < arguments.length; i++) {
+        addLog('dataLayer.push: ' + JSON.stringify(arguments[i], null, 2), 'event');
+      }
+      return result;
+    };
+
+    // Monitor tag fires
+    window.addEventListener('load', () => {
+      // Check if CTM loaded
+      if (window.ctm) {
+        addLog('✅ Tag Manager loaded successfully', 'tag');
+        addLog('Container ID: ' + window.ctm.containerId, 'info');
+      } else {
+        addLog('❌ Tag Manager failed to load', 'error');
+      }
+    });
+
+    // Test functions
+    function testPageView() {
+      window.dataLayer.push({
+        event: 'pageview',
+        page: window.location.pathname
+      });
+      addLog('✓ Pageview event triggered', 'event');
+    }
+
+    function testCustomEvent() {
+      window.dataLayer.push({
+        event: 'custom_test_event',
+        eventCategory: 'test',
+        eventAction: 'click',
+        eventLabel: 'test button'
+      });
+      addLog('✓ Custom event triggered', 'event');
+    }
+
+    function testPurchase() {
+      window.dataLayer.push({
+        event: 'purchase',
+        transaction_id: 'TXN-' + Date.now(),
+        value: 99.99,
+        currency: 'USD',
+        items: [
+          {
+            item_id: 'PROD-123',
+            item_name: 'Test Product',
+            price: 99.99,
+            quantity: 1
+          }
+        ]
+      });
+      addLog('✓ Purchase event triggered', 'event');
+    }
+
+    function testAddToCart() {
+      window.dataLayer.push({
+        event: 'add_to_cart',
+        item_id: 'PROD-456',
+        item_name: 'Another Product',
+        price: 49.99,
+        quantity: 2
+      });
+      addLog('✓ Add to cart event triggered', 'event');
+    }
+
+    function testUserLogin() {
+      window.dataLayer.push({
+        event: 'user_login',
+        user_id: 'USER-' + Date.now(),
+        method: 'email'
+      });
+      addLog('✓ User login event triggered', 'event');
+    }
+
+    function clearLog() {
+      logElement.innerHTML = '';
+      addLog('Log cleared', 'info');
+    }
+
+    function showDataLayer() {
+      addLog('Current dataLayer: ' + JSON.stringify(window.dataLayer, null, 2), 'info');
+    }
+
+    function changeUrl(path) {
+      window.history.pushState({}, '', path);
+      addLog('URL changed to: ' + path, 'info');
+      
+      // Trigger custom event for URL change
+      window.dataLayer.push({
+        event: 'url_change',
+        new_url: window.location.pathname
+      });
+    }
+
+    // Display current URL
+    document.getElementById('current-url').textContent = window.location.href;
+
+    // Initial log
+    addLog('Test page loaded', 'info');
+    addLog('Waiting for Tag Manager to initialize...', 'info');
+  </script>
+</body>
+</html>

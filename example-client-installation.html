@@ -1,0 +1,181 @@
+<!-- 
+  Tag Manager от tsprtg.com
+  Инструкция по установке для рекламодателей
+-->
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ваш сайт</title>
+  
+  <!-- ============================================ -->
+  <!-- Tag Manager от tsprtg.com - НАЧАЛО          -->
+  <!-- ============================================ -->
+  <script src="https://tsprtg.com/container.js?id=CTM-XXXXXXXXXX"></script>
+  <!-- ============================================ -->
+  <!-- Tag Manager от tsprtg.com - КОНЕЦ           -->
+  <!-- ============================================ -->
+  
+  <!-- Остальные ваши скрипты и стили -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Контент вашего сайта -->
+  <h1>Добро пожаловать!</h1>
+  
+  <!-- 
+    ============================================
+    Отправка событий в Tag Manager (опционально)
+    ============================================
+  -->
+  
+  <!-- Пример 1: Событие покупки на странице "Спасибо за заказ" -->
+  <script>
+    // Отправьте это событие после успешного оформления заказа
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'purchase',
+      transaction_id: '12345',           // ID заказа
+      value: 99.99,                       // Сумма заказа
+      currency: 'RUB',                    // Валюта
+      items: [
+        {
+          item_id: 'PROD-001',
+          item_name: 'Товар 1',
+          price: 59.99,
+          quantity: 1
+        },
+        {
+          item_id: 'PROD-002',
+          item_name: 'Товар 2',
+          price: 39.99,
+          quantity: 1
+        }
+      ]
+    });
+  </script>
+  
+  <!-- Пример 2: Событие добавления в корзину -->
+  <button onclick="addToCart()">Добавить в корзину</button>
+  <script>
+    function addToCart() {
+      window.dataLayer.push({
+        event: 'add_to_cart',
+        item_id: 'PROD-001',
+        item_name: 'Товар 1',
+        price: 59.99,
+        quantity: 1
+      });
+      
+      // Ваш код добавления в корзину
+      alert('Товар добавлен в корзину!');
+    }
+  </script>
+  
+  <!-- Пример 3: Событие регистрации пользователя -->
+  <script>
+    // После успешной регистрации
+    function onRegistrationSuccess(userId) {
+      window.dataLayer.push({
+        event: 'user_registration',
+        user_id: userId,
+        registration_method: 'email'
+      });
+    }
+  </script>
+  
+  <!-- Пример 4: Событие просмотра товара -->
+  <script>
+    // На странице товара
+    window.dataLayer.push({
+      event: 'view_item',
+      item_id: 'PROD-001',
+      item_name: 'Товар 1',
+      category: 'Электроника',
+      price: 59.99,
+      currency: 'RUB'
+    });
+  </script>
+  
+  <!-- Пример 5: Любое кастомное событие -->
+  <button onclick="customEvent()">Кастомное действие</button>
+  <script>
+    function customEvent() {
+      window.dataLayer.push({
+        event: 'custom_action',
+        action_name: 'button_click',
+        action_value: 'some_value'
+      });
+    }
+  </script>
+
+</body>
+</html>
+
+<!-- 
+  ============================================
+  ВАЖНЫЕ ЗАМЕТКИ:
+  ============================================
+  
+  1. Замените CTM-XXXXXXXXXX на ваш уникальный ID контейнера
+  2. Вставьте скрипт в <head> секцию, как можно выше
+  3. Не изменяйте URL скрипта (https://tsprtg.com/container.js)
+  4. События через dataLayer - опциональны, но рекомендуются для трекинга конверсий
+  
+  ============================================
+  ДОСТУПНЫЕ СОБЫТИЯ:
+  ============================================
+  
+  Стандартные события:
+  - purchase           - Покупка
+  - add_to_cart        - Добавление в корзину
+  - remove_from_cart   - Удаление из корзины
+  - view_item          - Просмотр товара
+  - view_item_list     - Просмотр списка товаров
+  - begin_checkout     - Начало оформления заказа
+  - add_payment_info   - Добавление платежной информации
+  - add_shipping_info  - Добавление информации о доставке
+  - user_registration  - Регистрация пользователя
+  - user_login         - Вход пользователя
+  
+  Можете создавать любые кастомные события!
+  
+  ============================================
+  ДОСТУПНЫЕ ПЕРЕМЕННЫЕ:
+  ============================================
+  
+  В тегах вы можете использовать переменные:
+  - {{page.url}}       - Текущий URL страницы
+  - {{page.title}}     - Заголовок страницы
+  - {{page.hostname}}  - Домен сайта
+  - {{page.path}}      - Путь URL
+  - {{page.referrer}}  - Источник перехода
+  - {{transaction_id}} - ID транзакции из события
+  - {{value}}          - Сумма из события
+  - {{currency}}       - Валюта из события
+  - {{item_id}}        - ID товара из события
+  
+  ============================================
+  ОТЛАДКА:
+  ============================================
+  
+  Для отладки добавьте &debug=true к URL:
+  <script src="https://tsprtg.com/container.js?id=CTM-XXX&debug=true"></script>
+  
+  Или включите в консоли браузера:
+  window.ctm.debug(true);
+  
+  Проверьте загрузку:
+  console.log(window.ctm);
+  console.log(window.dataLayer);
+  
+  ============================================
+  ПОДДЕРЖКА:
+  ============================================
+  
+  По всем вопросам обращайтесь к администратору Tag Manager
+  
+-->
